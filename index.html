@@ -2,97 +2,156 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Simple Calculator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculator by Umer</title>
   <style>
-     body {
-      text-align: center;
+    /* Global Styles */
+    body {
       font-family: 'Arial', sans-serif;
-      background: #f0f0f0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #f0f0f0;
+      color: #333;
     }
     .calculator {
-      width: 320px;
-      margin: 50px auto;
-      padding: 20px;
-      background: #ffffff;
-      border-radius: 15px;
-      box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+      width: 360px;
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
       overflow: hidden;
     }
-    input {
-      width: 100%;
+    .calculator input {
+      width: 80%;
       height: 60px;
-      font-size: 28px;
+      font-size: 24px;
       text-align: right;
-      margin-bottom: 20px;
-      border: none;
-      border-radius: 10px;
       padding: 10px;
-      background: #f0f0f0;
-      color: #333;
-      display: block;
-      margin: 0 auto;
-    }
-    button {
-      width: 70px;
-      height: 70px;
-      font-size: 26px;
-      margin: 8px;
-      border-radius: 12px;
       border: none;
-      outline: none;
+      background-color: #f9f9f9;
+      margin: 0 auto;
+      display: block;
+      border-radius: 20px;
+      margin-top: 10px; /* Adjusted top margin */
+    }
+    .calculator .buttons {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      padding: 20px;
+    }
+    .calculator button {
+      padding: 20px;
+      font-size: 18px;
+      border: none;
+      background-color: #f1f1f1;
       cursor: pointer;
-      background: linear-gradient(145deg, #ff5e62, #ff9966);
-      color: white;
-      box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2), -2px -2px 5px rgba(255, 255, 255, 0.7);
-      transition: background 0.3s, box-shadow 0.3s;
+      transition: background-color 0.3s, transform 0.1s;
     }
-    button:hover {
-      background: linear-gradient(145deg, #ff9966, #ff5e62);
-      box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3), -2px -2px 8px rgba(255, 255, 255, 0.7);
+    .calculator button:hover {
+      background-color: #e0e0e0;
     }
-    button:active {
-      box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.4);
+    .calculator button:active {
+      transform: scale(0.98);
     }
-    button:focus {
+    .calculator button:focus {
       outline: none;
-    }   
-    .clear {
-      background: #f44336;
     }
-    .equal {
-      background: #4caf50;
+    .calculator .history {
+      max-height: 200px;
+      overflow-y: auto;
+      background-color: #f9f9f9;
+      padding: 10px;
+      border-top: 1px solid #ddd;
+    }
+    .calculator .history div {
+      margin: 5px 0;
+      font-size: 14px;
+      color: #666;
+    }
+    .calculator .theme-toggle {
+      width: 100%;
+      padding: 10px;
+      background-color: #4CAF50;
+      color: #fff;
+      font-size: 16px;
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    .calculator .theme-toggle:hover {
+      background-color: #45a049;
+    }
+    /* Dark Mode Styles */
+    body[data-theme='dark'] {
+      background-color: #121212;
+    }
+    body[data-theme='dark'] .calculator {
+      background-color: #333;
+    }
+    body[data-theme='dark'] .calculator input {
+      background-color: #444;
+      color: #fff;
+    }
+    body[data-theme='dark'] .calculator button {
+      background-color: #555;
+      color: #fff;
+    }
+    body[data-theme='dark'] .calculator .history {
+      background-color: #444;
+      color: #fff;
+    }
+    body[data-theme='dark'] .calculator .theme-toggle {
+      background-color: #333;
+    }
+    /* Responsive Design */
+    @media (max-width: 400px) {
+      .calculator {
+        width: 90%;
+      }
+      .calculator input {
+        font-size: 20px;
+      }
+      .calculator button {
+        padding: 15px;
+        font-size: 16px;
+      }
     }
   </style>
 </head>
 <body>
   <div class="calculator">
     <input type="text" id="display" disabled>
-    <br>
-    <button onclick="press('7')">7</button>
-    <button onclick="press('8')">8</button>
-    <button onclick="press('9')">9</button>
-    <br>
-    <button onclick="press('4')">4</button>
-    <button onclick="press('5')">5</button>
-    <button onclick="press('6')">6</button>
-    <br>
-    <button onclick="press('1')">1</button>
-    <button onclick="press('2')">2</button>
-    <button onclick="press('3')">3</button>
-    <br>
-    <button onclick="press('0')">0</button>
-    <button onclick="press('-')">-</button>
-    <button onclick="press('*')">x</button>
-    <button onclick="press('.')">.</button>
-    <button onclick="calculate()">=</button>
-    <button onclick="press('+')">+</button>
-    <button onclick="press('/')">/</button>
-    <br>
-    <button onclick="clearDisplay()" style="width: 90%">C</button>
+    <div class="buttons">
+      <button onclick="clearDisplay()">C</button>
+      <button onclick="press('7')">7</button>
+      <button onclick="press('8')">8</button>
+      <button onclick="press('9')">9</button>
+      <button onclick="press('/')">/</button>
+      <button onclick="press('4')">4</button>
+      <button onclick="press('5')">5</button>
+      <button onclick="press('6')">6</button>
+      <button onclick="press('*')">*</button>
+      <button onclick="press('1')">1</button>
+      <button onclick="press('2')">2</button>
+      <button onclick="press('3')">3</button>
+      <button onclick="press('-')">-</button>
+      <button onclick="press('0')">0</button>
+      <button onclick="press('.')">.</button>
+      <button onclick="calculate()" class="equal">=</button>
+      <button onclick="press('+')">+</button>
+      <button onclick="backspace()">←</button>
+    </div>
+    <div class="history" id="history"></div>
+    <button class="theme-toggle" onclick="toggleTheme()">🌙 Dark Mode</button>
   </div>
 
   <script>
     let display = document.getElementById('display');
+    let historyContainer = document.getElementById('history');
+    let history = [];
 
     function press(value) {
       display.value += value;
@@ -100,7 +159,10 @@
 
     function calculate() {
       try {
-        display.value = eval(display.value);
+        let result = Function('"use strict"; return (' + display.value + ')')();
+        history.push(`${display.value} = ${result}`);
+        display.value = result;
+        updateHistory();
       } catch {
         display.value = "Error";
       }
@@ -108,6 +170,30 @@
 
     function clearDisplay() {
       display.value = "";
+    }
+
+    function backspace() {
+      display.value = display.value.slice(0, -1);
+    }
+
+    function updateHistory() {
+      historyContainer.innerHTML = '';
+      history.forEach(entry => {
+        let div = document.createElement('div');
+        div.textContent = entry;
+        historyContainer.appendChild(div);
+      });
+    }
+
+    function toggleTheme() {
+      let currentTheme = document.body.getAttribute('data-theme');
+      if (currentTheme === 'dark') {
+        document.body.setAttribute('data-theme', 'light');
+        document.querySelector('.theme-toggle').textContent = '🌙 Dark Mode';
+      } else {
+        document.body.setAttribute('data-theme', 'dark');
+        document.querySelector('.theme-toggle').textContent = '☀️ Light Mode';
+      }
     }
   </script>
 </body>
