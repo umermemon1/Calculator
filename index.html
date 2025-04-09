@@ -2,113 +2,58 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Simple Calculator</title>
-  <style>
-     body {
-      text-align: center;
-      font-family: 'Arial', sans-serif;
-      background: #f0f0f0;
-    }
-    .calculator {
-      width: 320px;
-      margin: 50px auto;
-      padding: 20px;
-      background: #ffffff;
-      border-radius: 15px;
-      box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-      overflow: hidden;
-    }
-    input {
-      width: 80%;
-      height: 60px;
-      font-size: 28px;
-      text-align: right;
-      margin-bottom: 20px;
-      border: none;
-      border-radius: 10px;
-      padding: 10px;
-      background: #f0f0f0;
-      color: #333;
-      display: block;
-      margin: 0 auto;
-    }
-    button {
-      width: 70px;
-      height: 70px;
-      font-size: 26px;
-      margin: 8px;
-      border-radius: 12px;
-      border: none;
-      outline: none;
-      cursor: pointer;
-      background: linear-gradient(145deg, #ff5e62, #ff9966);
-      color: white;
-      box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2), -2px -2px 5px rgba(255, 255, 255, 0.7);
-      transition: background 0.3s, box-shadow 0.3s;
-    }
-    button:hover {
-      background: linear-gradient(145deg, #ff9966, #ff5e62);
-      box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3), -2px -2px 8px rgba(255, 255, 255, 0.7);
-    }
-    button:active {
-      box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.4);
-    }
-    button:focus {
-      outline: none;
-    }   
-    .clear {
-      background: #f44336;
-    }
-    .equal {
-      background: #4caf50;
-    }
-  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculator by Umer</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+  <style>
+    /* Default Light Mode Styles */
+body {
+  background-color: #ffffff;
+  color: #000000;
+}
+
+.calculator {
+  background-color: #f0f0f0;
+}
+
+/* Dark Mode Styles */
+body[data-theme='dark'] {
+  background-color: #121212;
+  color: #ffffff;
+}
+
+body[data-theme='dark'] .calculator {
+  background-color: #333333;
+}
+
+  </style>
   <div class="calculator">
     <input type="text" id="display" disabled>
-    <br>
-    <button onclick="press('7')">7</button>
-    <button onclick="press('8')">8</button>
-    <button onclick="press('9')">9</button>
-    <br>
-    <button onclick="press('4')">4</button>
-    <button onclick="press('5')">5</button>
-    <button onclick="press('6')">6</button>
-    <br>
-    <button onclick="press('1')">1</button>
-    <button onclick="press('2')">2</button>
-    <button onclick="press('3')">3</button>
-    <br>
-    <button onclick="press('0')">0</button>
-    <button onclick="press('-')">-</button>
-    <button onclick="press('*')">x</button>
-    <button onclick="press('.')">.</button>
-    <button onclick="calculate()">=</button>
-    <button onclick="press('+')">+</button>
-    <button onclick="press('/')">/</button>
-    <br>
-    <button onclick="clearDisplay()" style="width: 90%">C</button>
+    <div class="buttons">
+      <!-- Calculator buttons go here -->
+    </div>
+    <button id="theme-toggle">🌙</button>
   </div>
+  <script src="script.js">
+    const themeToggle = document.getElementById('theme-toggle');
+const body = document.body;
 
-  <script>
-    let display = document.getElementById('display');
+// Check for saved user preference, if any
+const savedTheme = localStorage.getItem('theme');
+if (savedTheme) {
+  body.setAttribute('data-theme', savedTheme);
+}
 
-    function press(value) {
-      display.value += value;
-    }
+// Toggle theme on button click
+themeToggle.addEventListener('click', () => {
+  let currentTheme = body.getAttribute('data-theme');
+  currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+  body.setAttribute('data-theme', currentTheme);
+  localStorage.setItem('theme', currentTheme);
+});
 
-    function calculate() {
-      try {
-        display.value = eval(display.value);
-      } catch {
-        display.value = "Error";
-      }
-    }
-
-    function clearDisplay() {
-      display.value = "";
-    }
   </script>
 </body>
 </html>
