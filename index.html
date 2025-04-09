@@ -140,7 +140,7 @@
 
     function calculate() {
       try {
-        let result = eval(display.value);
+        let result = Function('"use strict"; return (' + display.value + ')')();
         history.push(`${display.value} = ${result}`);
         display.value = result;
         updateHistory();
