@@ -1,519 +1,725 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Calculator</title>
     <style>
-        :root {
-            --bg: #0f1724;
-            --panel: #111827;
-            --accent: #06b6d4;
-            --btn: #1f2937;
-            --btn-hover: #374151;
-            --muted: #9ca3af;
-            --accent-2: #10b981;
-            --fg: #ffffff;
-            --fg-muted: rgba(255, 255, 255, 0.75);
-            --transition: 200ms ease;
-        }
+      :root {
+        --bg: #0b1220;
+        --panel: rgba(17, 24, 39, 0.75);
+        --accent: #22d3ee;
+        --accent-2: #34d399;
+        --btn: rgba(255, 255, 255, 0.08);
+        --btn-hover: rgba(255, 255, 255, 0.15);
+        --fg: #ffffff;
+        --muted: #94a3b8;
+        --border: rgba(255, 255, 255, 0.08);
 
-        * {
-            box-sizing: border-box
-        }
+        --shadow:
+          0 20px 40px rgba(0, 0, 0, 0.35), 0 8px 20px rgba(0, 0, 0, 0.25);
 
-        html,
-        body {
-            height: 100%
-        }
+        --transition: 0.25s ease;
+      }
 
-        body {
-            margin: 0;
-            font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
-            background: linear-gradient(180deg, var(--bg), #08101a);
-            color: var(--fg);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 24px;
-        }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
 
-        .transition-all {
-            transition: background var(--transition), color var(--transition)
-        }
+      html,
+      body {
+        min-height: 100%;
+      }
 
+      body {
+        font-family:
+          Inter,
+          system-ui,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          sans-serif;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        min-height: 100vh;
+        padding: 24px;
+
+        background:
+          radial-gradient(circle at top left, #164e63 0%, transparent 40%),
+          radial-gradient(circle at bottom right, #0f766e 0%, transparent 40%),
+          linear-gradient(135deg, #020617, #0f172a);
+
+        color: var(--fg);
+        transition: background var(--transition);
+      }
+
+      .transition-all {
+        transition: all var(--transition);
+      }
+
+      /* Calculator */
+
+      .calculator {
+        position: relative;
+        width: 340px;
+        max-width: 100%;
+        padding: 22px;
+        background: var(--panel);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid var(--border);
+        border-radius: 24px;
+        box-shadow: var(--shadow);
+        overflow: hidden;
+      }
+
+      .calculator::before {
+        content: "";
+
+        position: absolute;
+        inset: -2px;
+
+        border-radius: inherit;
+
+        background: linear-gradient(
+          135deg,
+          rgba(34, 211, 238, 0.2),
+          rgba(52, 211, 153, 0.15)
+        );
+
+        filter: blur(22px);
+
+        z-index: -1;
+      }
+
+      /* Display */
+
+      .display {
+        width: 100%;
+        height: 72px;
+
+        border: 1px solid var(--border);
+        border-radius: 16px;
+
+        background: rgba(255, 255, 255, 0.05);
+
+        color: var(--fg);
+
+        font-size: 2rem;
+        font-weight: 600;
+
+        text-align: right;
+
+        padding: 0 18px;
+        margin-bottom: 18px;
+
+        outline: none;
+      }
+
+      /* Buttons Grid */
+
+      .buttons {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+      }
+
+      /* Buttons */
+
+      .btn {
+        background: var(--btn);
+
+        border: 1px solid var(--border);
+
+        color: var(--fg);
+
+        font-size: 18px;
+        font-weight: 600;
+
+        padding: 16px;
+
+        border-radius: 14px;
+
+        cursor: pointer;
+
+        transition: all 0.2s ease;
+
+        backdrop-filter: blur(10px);
+
+        box-shadow:
+          inset 0 1px 0 rgba(255, 255, 255, 0.08),
+          0 4px 12px rgba(0, 0, 0, 0.2);
+      }
+
+      .btn:hover {
+        background: var(--btn-hover);
+        transform: translateY(-2px);
+      }
+
+      .btn:active {
+        transform: scale(0.96);
+      }
+
+      .btn:focus-visible {
+        outline: 3px solid rgba(34, 211, 238, 0.35);
+        outline-offset: 2px;
+      }
+
+      .btn.wide {
+        grid-column: span 2;
+      }
+
+      /* Operator Buttons */
+
+      .operator {
+        color: var(--accent);
+        background: rgba(34, 211, 238, 0.1);
+      }
+
+      /* Equals Button */
+
+      .equals {
+        grid-column: span 4;
+
+        background: linear-gradient(135deg, var(--accent), var(--accent-2));
+
+        color: #04141d;
+
+        font-weight: 700;
+        font-size: 1.2rem;
+
+        border: none;
+
+        box-shadow: 0 10px 25px rgba(34, 211, 238, 0.35);
+      }
+
+      .equals:hover {
+        filter: brightness(1.08);
+      }
+
+      /* Small Buttons */
+
+      .small-btn {
+        background: transparent;
+
+        border: 1px solid var(--border);
+
+        color: var(--muted);
+
+        padding: 8px 12px;
+
+        border-radius: 10px;
+
+        cursor: pointer;
+
+        transition: all 0.2s ease;
+      }
+
+      .small-btn:hover {
+        background: rgba(255, 255, 255, 0.08);
+        color: var(--fg);
+      }
+
+      /* History */
+
+      .history-header {
+        color: var(--muted);
+        margin-top: 16px;
+        margin-bottom: 8px;
+      }
+
+      .history {
+        margin-top: 10px;
+
+        max-height: 180px;
+        overflow-y: auto;
+
+        padding: 10px;
+
+        border-radius: 14px;
+
+        border: 1px solid var(--border);
+
+        background: rgba(255, 255, 255, 0.04);
+
+        backdrop-filter: blur(10px);
+      }
+
+      .history::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      .history::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.15);
+        border-radius: 99px;
+      }
+
+      .history-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        gap: 10px;
+
+        padding: 10px;
+
+        border-radius: 10px;
+
+        transition: background 0.2s ease;
+      }
+
+      .history-item:hover {
+        background: rgba(255, 255, 255, 0.08);
+      }
+
+      .history-item .expr {
+        flex: 1;
+
+        color: var(--muted);
+
+        font-size: 14px;
+
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .history-item .meta {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .meta .time {
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.5);
+      }
+
+      .meta button {
+        border: none;
+        background: transparent;
+
+        cursor: pointer;
+
+        padding: 4px;
+
+        border-radius: 6px;
+
+        color: var(--accent);
+      }
+
+      .meta button.copy {
+        color: var(--accent-2);
+      }
+
+      /* Theme Toggle */
+
+      .theme-toggle {
+        width: 100%;
+        height: 44px;
+
+        margin-top: 14px;
+
+        border-radius: 12px;
+
+        border: 1px solid var(--border);
+
+        background: var(--btn);
+
+        color: var(--fg);
+
+        cursor: pointer;
+
+        font-size: 14px;
+        font-weight: 600;
+
+        transition: all 0.2s ease;
+      }
+
+      .theme-toggle:hover {
+        background: var(--btn-hover);
+      }
+
+      /* Light Theme */
+
+      body[data-theme="light"] {
+        --panel: rgba(255, 255, 255, 0.85);
+        --btn: rgba(15, 23, 42, 0.06);
+        --btn-hover: rgba(15, 23, 42, 0.12);
+        --fg: #0f172a;
+        --muted: #64748b;
+        --border: rgba(15, 23, 42, 0.08);
+
+        background:
+          radial-gradient(circle at top left, #bfdbfe, transparent 40%),
+          radial-gradient(circle at bottom right, #a7f3d0, transparent 40%),
+          linear-gradient(135deg, #f8fafc, #e2e8f0);
+      }
+
+      /* Dark Theme */
+
+      body[data-theme="dark"] {
+        --panel: rgba(17, 24, 39, 0.75);
+        --btn: rgba(255, 255, 255, 0.08);
+        --btn-hover: rgba(255, 255, 255, 0.15);
+        --fg: #ffffff;
+        --muted: #94a3b8;
+      }
+
+      /* High Contrast */
+
+      body[data-theme="high-contrast"] {
+        --panel: #000000;
+        --btn: #111111;
+        --btn-hover: #222222;
+        --fg: #ffff00;
+        --muted: #ffffff;
+        --border: #ffff00;
+
+        background: #000;
+      }
+
+      body[data-theme="high-contrast"] .btn,
+      body[data-theme="high-contrast"] .display {
+        border: 2px solid #ffff00;
+      }
+
+      /* System Theme */
+
+      @media (prefers-color-scheme: light) {
+        body[data-theme="system"] {
+          --panel: rgba(255, 255, 255, 0.85);
+          --btn: rgba(15, 23, 42, 0.06);
+          --btn-hover: rgba(15, 23, 42, 0.12);
+          --fg: #0f172a;
+          --muted: #64748b;
+          --border: rgba(15, 23, 42, 0.08);
+        }
+      }
+
+      @media (prefers-color-scheme: dark) {
+        body[data-theme="system"] {
+          --panel: rgba(17, 24, 39, 0.75);
+          --btn: rgba(255, 255, 255, 0.08);
+          --btn-hover: rgba(255, 255, 255, 0.15);
+          --fg: #ffffff;
+          --muted: #94a3b8;
+        }
+      }
+
+      /* Mobile */
+
+      @media (max-width: 380px) {
         .calculator {
-            width: 320px;
-            background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.01));
-            border-radius: 12px;
-            padding: 18px;
-            box-shadow: 0 8px 30px rgba(2, 6, 23, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.02);
-        }
-
-        .high-contrast * {
-            outline: 2px solid yellow
+          width: 100%;
+          padding: 18px;
         }
 
         .display {
-            width: 100%;
-            height: 56px;
-            border-radius: 8px;
-            border: none;
-            background: transparent;
-            color: var(--fg);
-            font-size: 28px;
-            padding: 8px 12px;
-            text-align: right;
-            margin-bottom: 12px;
-            outline: none;
-        }
-
-        .buttons {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
+          height: 60px;
+          font-size: 1.6rem;
         }
 
         .btn {
-            background: var(--btn);
-            border: none;
-            color: var(--fg);
-            padding: 14px 10px;
-            border-radius: 8px;
-            font-size: 18px;
-            cursor: pointer;
-            transition: transform .06s ease, background .08s ease;
-            box-shadow: 0 4px 10px rgba(2, 6, 23, 0.5);
+          padding: 14px;
+          font-size: 16px;
         }
-
-        .btn:active {
-            transform: translateY(1px) scale(.998)
-        }
-
-        .btn:hover {
-            background: var(--btn-hover)
-        }
-
-        .btn.wide {
-            grid-column: span 2
-        }
-
-        .equals {
-            grid-column: span 4;
-            background: linear-gradient(90deg, var(--accent), var(--accent-2));
-            color: #04121a;
-            font-weight: 700;
-            font-size: 20px;
-        }
-
-        .btn[aria-pressed="true"] {
-            outline: 2px solid rgba(255, 255, 255, 0.06)
-        }
-
-        @media (max-width:380px) {
-            .calculator {
-                width: 100%;
-            }
-
-            .display {
-                font-size: 22px;
-                height: 48px
-            }
-
-            .btn {
-                padding: 12px;
-                font-size: 16px
-            }
-        }
-
-        /* small helper for focus visibility */
-        .btn:focus {
-            outline: 3px solid rgba(6, 182, 212, 0.18);
-            outline-offset: 2px
-        }
-
-        /* Light theme overrides */
-        body[data-theme='light'] {
-            --bg: #f3f4f6;
-            --panel: #ffffff;
-            --btn: #f1f5f9;
-            --btn-hover: #e2e8f0;
-            --fg: #0f1724;
-            --muted: #6b7280;
-        }
-
-        /* Dark theme (default) */
-        body[data-theme='dark'] {
-            --bg: #0f1724;
-            --panel: #111827;
-            --btn: #1f2937;
-            --btn-hover: #374151;
-            --fg: #ffffff;
-            --muted: #9ca3af;
-        }
-
-        /* High contrast theme */
-        body[data-theme='high-contrast'] {
-            --bg: #000000;
-            --panel: #000000;
-            --btn: #000000;
-            --btn-hover: #111111;
-            --fg: #ffff00;
-            --muted: #ffffff;
-        }
-
-        /* System prefers */
-        @media (prefers-color-scheme: light) {
-            body[data-theme='system'] {
-                --bg: #f3f4f6;
-                --panel: #fff;
-                --btn: #f1f5f9;
-                --fg: #0f1724
-            }
-        }
-
-        @media (prefers-color-scheme: dark) {
-            body[data-theme='system'] {
-                --bg: #0f1724;
-                --panel: #111827;
-                --btn: #1f2937;
-                --fg: #fff
-            }
-        }
-
-        .calculator,
-        .display,
-        .btn,
-        .history,
-        .theme-toggle {
-            transition: background var(--transition), color var(--transition), border-color var(--transition)
-        }
-
-        /* History and small controls */
-        .history-header {
-            color: var(--muted);
-        }
-
-        .small-btn {
-            background: transparent;
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            color: var(--muted);
-            padding: 6px 8px;
-            border-radius: 6px;
-            cursor: pointer;
-        }
-
-        .small-btn:hover {
-            background: rgba(255, 255, 255, 0.02)
-        }
-
-        .history {
-            max-height: 170px;
-            overflow: auto;
-            margin-top: 8px;
-            padding: 8px;
-            background: rgba(255, 255, 255, 0.01);
-            border-radius: 8px;
-            border: 1px solid rgba(255, 255, 255, 0.02);
-        }
-
-        .history-item {
-            display: flex;
-            justify-content: space-between;
-            gap: 8px;
-            align-items: center;
-            padding: 6px 8px;
-            border-radius: 6px;
-        }
-
-        .history-item:hover {
-            background: rgba(255, 255, 255, 0.02)
-        }
-
-        .history-item .expr {
-            flex: 1;
-            color: var(--muted);
-            font-size: 14px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap
-        }
-
-        .history-item .meta {
-            display: flex;
-            gap: 8px;
-            align-items: center
-        }
-
-        .meta .time {
-            font-size: 12px;
-            color: rgba(255, 255, 255, 0.45)
-        }
-
-        .meta button {
-            background: transparent;
-            border: none;
-            color: var(--accent);
-            cursor: pointer;
-            padding: 4px;
-            border-radius: 4px
-        }
-
-        .meta button.copy {
-            color: var(--accent-2)
-        }
-
-        /* Theme toggle adjustment */
-        .theme-toggle {
-            width: 300px;
-            margin-top: 10px
-            backgroung-color: #020612
-            color: #fcfcfc;
-        }
+      }
     </style>
-</head>
+  </head>
 
-<body>
+  <body>
     <div class="calculator" role="application" aria-label="Calculator">
-        <input type="text" class="display" id="display" readonly aria-label="Calculator display" value="0">
-        <div class="buttons" role="group" aria-label="Calculator keypad">
-            <button class="btn wide" id="clear" title="Clear">C</button>
-            <button class="btn" id="backspace" title="Backspace">←</button>
-            <button class="btn" data-value="/" title="Divide">/</button>
+      <input
+        type="text"
+        class="display"
+        id="display"
+        readonly
+        aria-label="Calculator display"
+        value="0"
+      />
+      <div class="buttons" role="group" aria-label="Calculator keypad">
+        <button class="btn wide" id="clear" title="Clear">C</button>
+        <button class="btn" id="backspace" title="Backspace">←</button>
+        <button class="btn" data-value="/" title="Divide">/</button>
 
-            <button class="btn" data-value="7">7</button>
-            <button class="btn" data-value="8">8</button>
-            <button class="btn" data-value="9">9</button>
-            <button class="btn" data-value="*" title="Multiply">*</button>
+        <button class="btn" data-value="7">7</button>
+        <button class="btn" data-value="8">8</button>
+        <button class="btn" data-value="9">9</button>
+        <button class="btn" data-value="*" title="Multiply">*</button>
 
-            <button class="btn" data-value="4">4</button>
-            <button class="btn" data-value="5">5</button>
-            <button class="btn" data-value="6">6</button>
-            <button class="btn" data-value="-" title="Subtract">-</button>
+        <button class="btn" data-value="4">4</button>
+        <button class="btn" data-value="5">5</button>
+        <button class="btn" data-value="6">6</button>
+        <button class="btn" data-value="-" title="Subtract">-</button>
 
-            <button class="btn" data-value="1">1</button>
-            <button class="btn" data-value="2">2</button>
-            <button class="btn" data-value="3">3</button>
-            <button class="btn" data-value="+" title="Add">+</button>
+        <button class="btn" data-value="1">1</button>
+        <button class="btn" data-value="2">2</button>
+        <button class="btn" data-value="3">3</button>
+        <button class="btn" data-value="+" title="Add">+</button>
 
-            <button class="btn" data-value="0">0</button>
-            <button class="btn" data-value=".">.</button>
-            <button class="btn" data-value="(" title="Open parenthesis">(</button>
-            <button class="btn" data-value=")" title="Close parenthesis">)</button>
+        <button class="btn" data-value="0">0</button>
+        <button class="btn" data-value=".">.</button>
+        <button class="btn" data-value="(" title="Open parenthesis">(</button>
+        <button class="btn" data-value=")" title="Close parenthesis">)</button>
 
-            <button class="btn equals" id="equals" title="Equals">=</button>
-        </div>
-        <!-- History panel -->
-        <div class="history-header"
-            style="display:flex;align-items:center;justify-content:space-between;margin-top:12px;">
-            <strong style="font-size:14px;">History</strong>
-            <button id="clearHistory" class="small-btn" title="Clear history">Clear History</button>
-        </div>
-        <div class="history" id="history" aria-live="polite" aria-label="Calculation history"></div>
-        <!-- Theme toggle (click to cycle: Light → Dark → System → High-Contrast) -->
-        <button class="theme-toggle" id="themeToggle" aria-pressed="false" title="Change theme (click to cycle)">🌙 Dark
-            Mode</button>
+        <button class="btn equals" id="equals" title="Equals">=</button>
+      </div>
+      <!-- History panel -->
+      <div
+        class="history-header"
+        style="
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          margin-top: 12px;
+        "
+      >
+        <strong style="font-size: 14px">History</strong>
+        <button id="clearHistory" class="small-btn" title="Clear history">
+          Clear History
+        </button>
+      </div>
+      <div
+        class="history"
+        id="history"
+        aria-live="polite"
+        aria-label="Calculation history"
+      ></div>
+      <!-- Theme toggle (click to cycle: Light → Dark → System → High-Contrast) -->
+      <button
+        class="theme-toggle"
+        id="themeToggle"
+        aria-pressed="false"
+        title="Change theme (click to cycle)"
+      >
+        🌙 Dark Mode
+      </button>
     </div>
 
-    <script>// Calculator Logic with In-Memory History
-        (() => {
-            const display = document.getElementById('display');
-            const buttons = Array.from(document.querySelectorAll('.btn'));
-            const historyContainer = document.getElementById('history');
-            const themeToggle = document.getElementById('themeToggle');
-            const clearHistoryBtn = document.getElementById('clearHistory');
+    <script>
+      // Calculator Logic with In-Memory History
+      (() => {
+        const display = document.getElementById("display");
+        const buttons = Array.from(document.querySelectorAll(".btn"));
+        const historyContainer = document.getElementById("history");
+        const themeToggle = document.getElementById("themeToggle");
+        const clearHistoryBtn = document.getElementById("clearHistory");
 
-            let sessionHistory = [];
-            const THEMES = ['light', 'dark', 'system', 'high-contrast'];
-            let currentTheme = 'light';
+        let sessionHistory = [];
+        const THEMES = ["light", "dark", "system", "high-contrast"];
+        let currentTheme = "light";
 
-            function setDisplay(v) {
-                display.value = String(v).slice(0, 100);
-            }
+        function setDisplay(v) {
+          display.value = String(v).slice(0, 100);
+        }
 
-            function append(str) {
-                if (display.value === '0') setDisplay(str);
-                else setDisplay(display.value + str);
-            }
+        function append(str) {
+          if (display.value === "0") setDisplay(str);
+          else setDisplay(display.value + str);
+        }
 
-            function clearAll() {
-                setDisplay('0');
-            }
+        function clearAll() {
+          setDisplay("0");
+        }
 
-            function backspace() {
-                if (display.value.length <= 1) return clearAll();
-                setDisplay(display.value.slice(0, -1));
-            }
+        function backspace() {
+          if (display.value.length <= 1) return clearAll();
+          setDisplay(display.value.slice(0, -1));
+        }
 
-            function safeEvaluate(expr) {
-                const allowed = /^[0-9+\-*/().\s]+$/;
-                if (!allowed.test(expr)) throw new Error('Invalid characters');
-                const cleaned = expr.replace(/\s+/g, '');
-                if (/[+\-*/]{2,}/.test(cleaned.replace(/\(\-/, '('))) throw new Error('Malformed expression');
-                const fn = new Function('return (' + cleaned + ')');
-                const result = fn();
-                if (!isFinite(result)) throw new Error('Math error');
-                return result;
-            }
+        function safeEvaluate(expr) {
+          const allowed = /^[0-9+\-*/().\s]+$/;
+          if (!allowed.test(expr)) throw new Error("Invalid characters");
+          const cleaned = expr.replace(/\s+/g, "");
+          if (/[+\-*/]{2,}/.test(cleaned.replace(/\(\-/, "(")))
+            throw new Error("Malformed expression");
+          const fn = new Function("return (" + cleaned + ")");
+          const result = fn();
+          if (!isFinite(result)) throw new Error("Math error");
+          return result;
+        }
 
-            function formatTime(ts) {
-                const d = new Date(ts);
-                return d.toLocaleTimeString();
-            }
+        function formatTime(ts) {
+          const d = new Date(ts);
+          return d.toLocaleTimeString();
+        }
 
-            function renderHistory() {
-                if (!historyContainer) return;
-                historyContainer.innerHTML = '';
-                sessionHistory.slice().reverse().forEach(item => {
-                    const row = document.createElement('div');
-                    row.className = 'history-item';
+        function renderHistory() {
+          if (!historyContainer) return;
+          historyContainer.innerHTML = "";
+          sessionHistory
+            .slice()
+            .reverse()
+            .forEach((item) => {
+              const row = document.createElement("div");
+              row.className = "history-item";
 
-                    const exprSpan = document.createElement('div');
-                    exprSpan.className = 'expr';
-                    exprSpan.textContent = `${item.expr} = ${item.result}`;
-                    exprSpan.title = `${item.expr} = ${item.result}`;
+              const exprSpan = document.createElement("div");
+              exprSpan.className = "expr";
+              exprSpan.textContent = `${item.expr} = ${item.result}`;
+              exprSpan.title = `${item.expr} = ${item.result}`;
 
-                    const meta = document.createElement('div');
-                    meta.className = 'meta';
+              const meta = document.createElement("div");
+              meta.className = "meta";
 
-                    const time = document.createElement('div');
-                    time.className = 'time';
-                    time.textContent = formatTime(item.time);
+              const time = document.createElement("div");
+              time.className = "time";
+              time.textContent = formatTime(item.time);
 
-                    const copyBtn = document.createElement('button');
-                    copyBtn.className = 'copy';
-                    copyBtn.textContent = 'Copy';
-                    copyBtn.addEventListener('click', e => {
-                        e.stopPropagation();
-                        navigator.clipboard?.writeText(String(item.result)).catch(() => { });
-                    });
+              const copyBtn = document.createElement("button");
+              copyBtn.className = "copy";
+              copyBtn.textContent = "Copy";
+              copyBtn.addEventListener("click", (e) => {
+                e.stopPropagation();
+                navigator.clipboard
+                  ?.writeText(String(item.result))
+                  .catch(() => {});
+              });
 
-                    const loadBtn = document.createElement('button');
-                    loadBtn.className = 'load';
-                    loadBtn.textContent = 'Load';
-                    loadBtn.addEventListener('click', e => {
-                        e.stopPropagation();
-                        setDisplay(item.expr);
-                    });
+              const loadBtn = document.createElement("button");
+              loadBtn.className = "load";
+              loadBtn.textContent = "Load";
+              loadBtn.addEventListener("click", (e) => {
+                e.stopPropagation();
+                setDisplay(item.expr);
+              });
 
-                    meta.appendChild(time);
-                    meta.appendChild(copyBtn);
-                    meta.appendChild(loadBtn);
-                    row.appendChild(exprSpan);
-                    row.appendChild(meta);
-                    row.addEventListener('click', () => setDisplay(item.expr));
-                    historyContainer.appendChild(row);
-                });
-            }
-
-            function pushHistory(expr, result) {
-                sessionHistory.push({ expr: String(expr), result: String(result), time: Date.now() });
-                if (sessionHistory.length > 50) sessionHistory.shift();
-                renderHistory();
-            }
-
-            function clearHistory() {
-                sessionHistory = [];
-                renderHistory();
-            }
-
-            if (clearHistoryBtn) clearHistoryBtn.addEventListener('click', clearHistory);
-
-            function updateToggleLabel(theme) {
-                if (!themeToggle) return;
-                switch (theme) {
-                    case 'light': themeToggle.textContent = '🌙 Dark Mode'; break;
-                    case 'dark': themeToggle.textContent = '☀️ Light Mode'; break;
-                    case 'system': themeToggle.textContent = '🖥️ System'; break;
-                    case 'high-contrast': themeToggle.textContent = '⚫ High Contrast'; break;
-                    default: themeToggle.textContent = 'Theme';
-                }
-                themeToggle.setAttribute('aria-pressed', String(theme === 'dark'));
-            }
-
-            function applyTheme(theme) {
-                document.documentElement.classList.remove('transition-all');
-                void document.documentElement.offsetWidth;
-                document.documentElement.classList.add('transition-all');
-
-                if (theme === 'system') {
-                    document.body.setAttribute('data-theme', 'system');
-                } else if (theme === 'high-contrast') {
-                    document.body.setAttribute('data-theme', 'high-contrast');
-                    document.documentElement.classList.add('high-contrast');
-                } else {
-                    document.body.setAttribute('data-theme', theme);
-                    document.documentElement.classList.remove('high-contrast');
-                }
-                currentTheme = theme;
-                updateToggleLabel(theme);
-            }
-
-            if (themeToggle) {
-                themeToggle.addEventListener('click', () => {
-                    const idx = THEMES.indexOf(currentTheme);
-                    const next = THEMES[(idx + 1) % THEMES.length];
-                    applyTheme(next);
-                });
-            }
-
-            window.addEventListener('keydown', e => {
-                if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'm') {
-                    e.preventDefault();
-                    const idx = THEMES.indexOf(currentTheme);
-                    const next = THEMES[(idx + 1) % THEMES.length];
-                    applyTheme(next);
-                }
+              meta.appendChild(time);
+              meta.appendChild(copyBtn);
+              meta.appendChild(loadBtn);
+              row.appendChild(exprSpan);
+              row.appendChild(meta);
+              row.addEventListener("click", () => setDisplay(item.expr));
+              historyContainer.appendChild(row);
             });
+        }
 
-            renderHistory();
+        function pushHistory(expr, result) {
+          sessionHistory.push({
+            expr: String(expr),
+            result: String(result),
+            time: Date.now(),
+          });
+          if (sessionHistory.length > 50) sessionHistory.shift();
+          renderHistory();
+        }
 
-            buttons.forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const val = btn.dataset.value;
-                    if (btn.id === 'clear') return clearAll();
-                    if (btn.id === 'backspace') return backspace();
-                    if (btn.id === 'equals') {
-                        try {
-                            const expr = display.value;
-                            const res = safeEvaluate(expr);
-                            setDisplay(res);
-                            pushHistory(expr, res);
-                        } catch {
-                            setDisplay('Error');
-                            setTimeout(clearAll, 900);
-                        }
-                        return;
-                    }
-                    if (val) append(val);
-                });
-            });
+        function clearHistory() {
+          sessionHistory = [];
+          renderHistory();
+        }
 
-            window.addEventListener('keydown', e => {
-                const k = e.key;
-                if (/^[0-9]$/.test(k)) return append(k);
-                if (k === 'Enter' || k === '=') {
-                    e.preventDefault();
-                    try {
-                        const expr = display.value;
-                        const res = safeEvaluate(expr);
-                        setDisplay(res);
-                        pushHistory(expr, res);
-                    } catch {
-                        setDisplay('Error');
-                        setTimeout(clearAll, 900);
-                    }
-                    return;
-                }
-                if (k === 'Backspace') return backspace();
-                if (k === 'Delete') return clearAll();
-                if (['+', '-', '*', '/', '.', '(', ')'].includes(k)) return append(k);
-            });
+        if (clearHistoryBtn)
+          clearHistoryBtn.addEventListener("click", clearHistory);
 
-            clearAll();
-        })();
+        function updateToggleLabel(theme) {
+          if (!themeToggle) return;
+          switch (theme) {
+            case "light":
+              themeToggle.textContent = "🌙 Dark Mode";
+              break;
+            case "dark":
+              themeToggle.textContent = "☀️ Light Mode";
+              break;
+            case "system":
+              themeToggle.textContent = "🖥️ System";
+              break;
+            case "high-contrast":
+              themeToggle.textContent = "⚫ High Contrast";
+              break;
+            default:
+              themeToggle.textContent = "Theme";
+          }
+          themeToggle.setAttribute("aria-pressed", String(theme === "dark"));
+        }
+
+        function applyTheme(theme) {
+          document.documentElement.classList.remove("transition-all");
+          void document.documentElement.offsetWidth;
+          document.documentElement.classList.add("transition-all");
+
+          if (theme === "system") {
+            document.body.setAttribute("data-theme", "system");
+          } else if (theme === "high-contrast") {
+            document.body.setAttribute("data-theme", "high-contrast");
+            document.documentElement.classList.add("high-contrast");
+          } else {
+            document.body.setAttribute("data-theme", theme);
+            document.documentElement.classList.remove("high-contrast");
+          }
+          currentTheme = theme;
+          updateToggleLabel(theme);
+        }
+
+        if (themeToggle) {
+          themeToggle.addEventListener("click", () => {
+            const idx = THEMES.indexOf(currentTheme);
+            const next = THEMES[(idx + 1) % THEMES.length];
+            applyTheme(next);
+          });
+        }
+
+        window.addEventListener("keydown", (e) => {
+          if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "m") {
+            e.preventDefault();
+            const idx = THEMES.indexOf(currentTheme);
+            const next = THEMES[(idx + 1) % THEMES.length];
+            applyTheme(next);
+          }
+        });
+
+        renderHistory();
+
+        buttons.forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const val = btn.dataset.value;
+            if (btn.id === "clear") return clearAll();
+            if (btn.id === "backspace") return backspace();
+            if (btn.id === "equals") {
+              try {
+                const expr = display.value;
+                const res = safeEvaluate(expr);
+                setDisplay(res);
+                pushHistory(expr, res);
+              } catch {
+                setDisplay("Error");
+                setTimeout(clearAll, 900);
+              }
+              return;
+            }
+            if (val) append(val);
+          });
+        });
+
+        window.addEventListener("keydown", (e) => {
+          const k = e.key;
+          if (/^[0-9]$/.test(k)) return append(k);
+          if (k === "Enter" || k === "=") {
+            e.preventDefault();
+            try {
+              const expr = display.value;
+              const res = safeEvaluate(expr);
+              setDisplay(res);
+              pushHistory(expr, res);
+            } catch {
+              setDisplay("Error");
+              setTimeout(clearAll, 900);
+            }
+            return;
+          }
+          if (k === "Backspace") return backspace();
+          if (k === "Delete") return clearAll();
+          if (["+", "-", "*", "/", ".", "(", ")"].includes(k)) return append(k);
+        });
+
+        clearAll();
+      })();
     </script>
-</body>
-
+  </body>
 </html>
