@@ -27,7 +27,7 @@ A modern and responsive calculator built using **HTML**, **CSS**, and **JavaScri
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/umermemon1/Calculator.git
+git clone https://github.com/umerjs/Calculator.git
 ```
 
 2. Navigate to the project folder:
